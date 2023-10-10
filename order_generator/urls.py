@@ -1,5 +1,4 @@
 from django.urls import path
 
-urlpatterns = [
-]
+urlpatterns = []
 app_name = "order_generator"
