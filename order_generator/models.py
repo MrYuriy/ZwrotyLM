@@ -9,7 +9,7 @@ class Product(models.Model):
     quantity_damage = models.IntegerField()
 
     def __str__(self):
-        return self.name
+        return f"{self.sku.name_of_product} {self.sku.sku}"
 
 
 class Order(models.Model):
@@ -29,7 +29,7 @@ class Order(models.Model):
         max_length=1,
         choices=TAPE_OF_DELIVERY_CHOICES,
         default=BOX,
-        verbose_name="Tape of Delivery",
+        verbose_name="tape_of_delivery",
     )
 
     def __str__(self):
@@ -45,9 +45,6 @@ class SkuInformation(models.Model):
     sku = models.IntegerField()
     name_of_product = CharField(max_length=100)
     barcode = models.ForeignKey("Barcode", on_delete=models.CASCADE)
-
-    class Meta:
-        db_table = "skuinformation"
 
     def __str__(self):
         return self.name_of_product
