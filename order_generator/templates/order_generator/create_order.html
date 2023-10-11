@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Створити замовлення{% endblock %}
+
+{% block content %}
+    <h1>Створити нове замовлення</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label for="order_number">NR zam</label>
+        <input id="order_number" name="order_number"><br>
+        <label for="tape_of_delivery">Тип доставки (C/P):</label>
+        <select id="tape_of_delivery" name="tape_of_delivery">
+            <option value="C">Paczka</option>
+            <option value="P">Paleta</option>
+        </select>
+        <button type="submit">Продовжити</button>
+    </form>
+    <a href="{% url 'order_generator:home' %}">На головну сторінку</a>
+{% endblock %}

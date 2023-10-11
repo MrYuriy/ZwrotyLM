@@ -40,14 +40,17 @@ class OrderProduct(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f"Order: {self.order.nr_order} Product:{self.product.sku.sku}"
+
 
 class SkuInformation(models.Model):
     sku = models.IntegerField()
     name_of_product = CharField(max_length=100)
-    barcode = models.ForeignKey("Barcode", on_delete=models.CASCADE)
+    barcode = models.ManyToManyField("Barcode")
 
     def __str__(self):
-        return self.name_of_product
+        return f"{self.sku} {self.name_of_product}"
 
 
 class Barcode(models.Model):

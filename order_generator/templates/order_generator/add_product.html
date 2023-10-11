@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Додати продукти до замовлення{% endblock %}
+
+{% block content %}
+    <h1>Додати продукти до замовлення №{{ order.nr_order }}</h1>
+    <form method="post">
+        {% csrf_token %}
+        <div>
+            <label for="sku">SKU:</label>
+            <input type="text" name="sku" id="sku">
+        </div>
+        <!-- Додайте div для відображення назви продукту -->
+        <div id="product-name">
+            Назва продукту: <span id="product-name-value"></span>
+        </div>
+        <div>
+            <label for="quantity">Кількість:</label>
+            <input type="number" name="quantity" id="quantity">
+        </div>
+        <div>
+            <label for="quantity_not_damaged">Кількість без пошкоджень:</label>
+            <input type="number" name="quantity_not_damaged" id="quantity_not_damaged">
+        </div>
+        <button type="submit">Додати</button>
+    </form>
+    <a href="{% url 'order_generator:create_order' %}">Нове замовлення</a>
+    <a href="{% url 'order_generator:home' %}">На головну сторінку</a>
+{% endblock %}
+
+{% block javascript %}
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+        var skuInput = document.getElementById("sku");
+        var productNameValue = document.getElementById("product-name-value");
+
+        skuInput.addEventListener("blur", function() {
+            if (!skuInput.disabled) {
+                var sku = skuInput.value;
+                if (sku !== '') {
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("POST", "{% url 'order_generator:get_product_name' %}", true);
+                    xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                    xhr.onreadystatechange = function() {
+                        if (xhr.readyState === 4 && xhr.status === 200) {
+                            var data = JSON.parse(xhr.responseText);
+                            productNameValue.textContent = data.product_name;
+                        }
+                    };
+                    var data = "sku=" + sku;
+                    xhr.send(data);
+                } else {
+                    productNameValue.textContent = '';
+                }
+            }
+        });
+    });
+    </script>
+{% endblock %}
