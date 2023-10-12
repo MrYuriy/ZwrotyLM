@@ -4,6 +4,6 @@
 
 {% block content %}
     <a href="{% url 'order_generator:create_order' %}"> Nowe zamówienie </a> <br>
-    <a href="{% url 'order_generator:generate_one_order_pdf' %}">Wydrukuj Zamówienie LM</a>
-    <a href="{%  %}">Wydrukuj  ZWROTY</a>
+    <a href="{% url 'order_generator:generate_one_order_pdf' %}">Wydrukuj Zamówienie LM</a><br>
+    <a href="{% url 'order_generator:generate_reports_for_day' %}">Wydrukuj  ZWROTY</a>
 {% endblock %}

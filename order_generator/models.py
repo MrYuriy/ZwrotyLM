@@ -47,7 +47,7 @@ class OrderProduct(models.Model):
 class SkuInformation(models.Model):
     sku = models.IntegerField()
     name_of_product = CharField(max_length=100)
-    barcode = models.ManyToManyField("Barcode")
+    barcode = models.ManyToManyField("Barcode", null=True)
 
     def __str__(self):
         return f"{self.sku} {self.name_of_product}"

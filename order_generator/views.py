@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect
-from .models import Order, Product, OrderProduct, SkuInformation
+from .models import Order, Product, OrderProduct, SkuInformation, Barcode
 from django.db.models import Q
 from django.http import JsonResponse, FileResponse
 from django.core.exceptions import ObjectDoesNotExist
-from order_generator.utils import generate_one_order_pdf
+from order_generator.utils import generate_one_order_pdf, generate_all_orders_pdf
+from datetime import date, datetime
 
 
 def home(request):
@@ -20,8 +21,25 @@ def create_order(request):
     return render(request, "order_generator/create_order.html")
 
 
+def get_sku_or_create_empty(sku_or_ean):
+    sku = SkuInformation.objects.filter(
+        Q(sku__exact=sku_or_ean) | Q(barcode__code__icontains=sku_or_ean)
+    ).last()
+    if not sku:
+        # Check if a Barcode with the code already exists
+        barcode, created = Barcode.objects.get_or_create(code="Brak codu")
+
+        sku = SkuInformation(
+            sku=sku_or_ean,
+            name_of_product="name not found"
+        )
+        sku.save()
+        sku.barcode.add(barcode)
+    return sku
+
+
 def add_product(request, order_nr):
-    order = Order.objects.filter(nr_order=order_nr).latest("creation_date")
+    order = Order.objects.filter(nr_order=order_nr).last()
 
     if request.method == "POST":
         sku_or_ean = request.POST.get("sku")
@@ -30,9 +48,8 @@ def add_product(request, order_nr):
         quantity_damage = int(quantity) - int(quantity_not_damaged)
 
         if sku_or_ean and quantity:
-            sku = SkuInformation.objects.filter(
-                Q(sku__exact=sku_or_ean) | Q(barcode__code__icontains=sku_or_ean)
-            ).last()
+            sku = get_sku_or_create_empty(sku_or_ean)
+
             product = Product.objects.create(
                 sku=sku,
                 quantity=quantity,
@@ -71,3 +88,10 @@ def generate_one_order_form(request):
     return render(request, "order_generator/one_order_form.html")
 
 
+def generate_reports_for_day(request):
+    if request.method == "POST":
+        work_day = request.POST.get("date_to_print")
+        work_day_order_pdf = generate_all_orders_pdf(work_day)
+        resource = FileResponse(work_day_order_pdf, as_attachment=False, filename="Zwrotu_od_klientow.pdf")
+        return resource
+    return render(request, "order_generator/reports_for_day.html", {"data_today": date.today().strftime("%Y-%m-%d")})

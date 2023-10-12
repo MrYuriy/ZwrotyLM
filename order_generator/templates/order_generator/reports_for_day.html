@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}Головна сторінка{% endblock %}
+
+{% block content %}
+   <form method="post" target="_blank" action="{% url 'order_generator:generate_reports_for_day' %}">
+     {% csrf_token %}
+    <span class="input-group-text" id="inputGroup-sizing-default">Data: </span>
+    <input name="date_to_print", id="nrorder" type="date" class="form-control"aria-describedby="inputGroup-sizing-default" value="{{data_today}}">
+     <button type="submit">Generowac</button>
+   </form>
+{% endblock %}

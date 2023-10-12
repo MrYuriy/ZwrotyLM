@@ -8,7 +8,7 @@
         {% csrf_token %}
         <div>
             <label for="sku">SKU:</label>
-            <input type="text" name="sku" id="sku">
+            <input type="text" name="sku" id="sku" required>
         </div>
         <!-- Додайте div для відображення назви продукту -->
         <div id="product-name">
@@ -16,11 +16,11 @@
         </div>
         <div>
             <label for="quantity">Кількість:</label>
-            <input type="number" name="quantity" id="quantity">
+            <input type="number" name="quantity" id="quantity" required>
         </div>
         <div>
             <label for="quantity_not_damaged">Кількість без пошкоджень:</label>
-            <input type="number" name="quantity_not_damaged" id="quantity_not_damaged">
+            <input type="number" name="quantity_not_damaged" id="quantity_not_damaged" required>
         </div>
         <button type="submit">Додати</button>
     </form>
