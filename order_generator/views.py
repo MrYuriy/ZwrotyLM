@@ -5,6 +5,7 @@ from django.http import JsonResponse, FileResponse
 from django.core.exceptions import ObjectDoesNotExist
 from order_generator.utils import generate_one_order_pdf, generate_all_orders_pdf
 from datetime import date, datetime
+from django.db import transaction
 
 
 def home(request):
@@ -43,21 +44,45 @@ def add_product(request, order_nr):
 
     if request.method == "POST":
         sku_or_ean = request.POST.get("sku")
-        quantity = request.POST.get("quantity")
-        quantity_not_damaged = request.POST.get("quantity_not_damaged")
+        quantity = int(request.POST.get("quantity"))
+        quantity_not_damaged = int(request.POST.get("quantity_not_damaged"))
         quantity_damage = int(quantity) - int(quantity_not_damaged)
 
-        if sku_or_ean and quantity:
-            sku = get_sku_or_create_empty(sku_or_ean)
+        sku = get_sku_or_create_empty(sku_or_ean)
 
-            product = Product.objects.create(
-                sku=sku,
-                quantity=quantity,
-                quantity_not_damaged=quantity_not_damaged,
-                quantity_damage=quantity_damage,
-            )
+        with transaction.atomic():
+            # Check if an OrderProduct with the same order and product exists
+            order_product = OrderProduct.objects.filter(order=order, product__sku__sku=sku.sku).first()
 
-            OrderProduct.objects.create(order=order, product=product)
+            if order_product:
+                # If it exists, update the quantities
+                order_product.product.quantity += quantity
+                order_product.product.quantity_not_damaged += quantity_not_damaged
+                order_product.product.quantity_damage += quantity_damage
+                order_product.product.save()  # Save the updated Product
+            else:
+                # If it doesn't exist, create a new OrderProduct
+                product = Product.objects.create(
+                    sku=sku, quantity=quantity,
+                    quantity_not_damaged=quantity_not_damaged,
+                    quantity_damage=quantity_damage)
+                OrderProduct.objects.create(order=order, product=product)
+
+        # #order_product, created = OrderProduct.objects.get_or_create(order=order, product__sku__sku=sku.sku)
+        # order_product = OrderProduct.objects.filter(order=order, product__sku__sku=sku.sku)
+        # if order_product:
+        #     order_product.product.quantity += quantity
+        #     order_product.product.quantity_not_damaged += quantity_not_damaged
+        #     order_product.product.quantity_damage += quantity_damage
+        # print(order_product)
+        # product = Product.objects.create(
+        #     sku=sku,
+        #     quantity=quantity,
+        #     quantity_not_damaged=quantity_not_damaged,
+        #     quantity_damage=quantity_damage,
+        # )
+        #
+        # OrderProduct.objects.create(order=order, product=product)
 
     return render(request, "order_generator/add_product.html", {"order": order})
 
