@@ -68,22 +68,6 @@ def add_product(request, order_nr):
                     quantity_damage=quantity_damage)
                 OrderProduct.objects.create(order=order, product=product)
 
-        # #order_product, created = OrderProduct.objects.get_or_create(order=order, product__sku__sku=sku.sku)
-        # order_product = OrderProduct.objects.filter(order=order, product__sku__sku=sku.sku)
-        # if order_product:
-        #     order_product.product.quantity += quantity
-        #     order_product.product.quantity_not_damaged += quantity_not_damaged
-        #     order_product.product.quantity_damage += quantity_damage
-        # print(order_product)
-        # product = Product.objects.create(
-        #     sku=sku,
-        #     quantity=quantity,
-        #     quantity_not_damaged=quantity_not_damaged,
-        #     quantity_damage=quantity_damage,
-        # )
-        #
-        # OrderProduct.objects.create(order=order, product=product)
-
     return render(request, "order_generator/add_product.html", {"order": order})
 
 

@@ -1,18 +1,24 @@
 {% extends "base.html" %}
 {% block title %}Створити замовлення{% endblock %}
 
+{% block navigation %}
+     <a class="btn btn-secondary" role="button" href="{% url 'order_generator:home' %}">Home</a>
+{% endblock %}
+
 {% block content %}
-    <h1>Створити нове замовлення</h1>
     <form method="post">
         {% csrf_token %}
-        <label for="order_number">NR zam</label>
-        <input id="order_number" name="order_number"><br>
-        <label for="tape_of_delivery">Тип доставки (C/P):</label>
-        <select id="tape_of_delivery" name="tape_of_delivery">
+        <div class="input-group mb-3" type="number">
+        <span class="input-group-text" id="inputGroup-sizing-default">Nr zamówienia:</span>
+        <input id="order_number" name="order_number" type="number" class="form-control "><br>
+        </div>
+
+
+        <select id="tape_of_delivery" name="tape_of_delivery" class="form-select">
+            <option  disabled selected value="" >Sposób dostawy</option>
             <option value="C">Paczka</option>
             <option value="P">Paleta</option>
-        </select>
-        <button type="submit">Продовжити</button>
+        </select> <br>
+        <button class="btn btn-secondary" type="submit">Kontynuować</button>
     </form>
-    <a href="{% url 'order_generator:home' %}">На головну сторінку</a>
 {% endblock %}

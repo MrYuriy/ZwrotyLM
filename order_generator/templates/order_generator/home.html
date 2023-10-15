@@ -3,7 +3,9 @@
 {% block title %}{% endblock %}
 
 {% block content %}
-    <a href="{% url 'order_generator:create_order' %}"> Nowe zamówienie </a> <br>
-    <a href="{% url 'order_generator:generate_one_order_pdf' %}">Wydrukuj Zamówienie LM</a><br>
-    <a href="{% url 'order_generator:generate_reports_for_day' %}">Wydrukuj  ZWROTY</a>
+    <a class="btn btn-outline-secondary" role="button" href="{% url 'order_generator:create_order' %}"> Nowe zamówienie </a> <br><br>
+    <a class="btn btn-outline-secondary" role="button" href="{% url 'order_generator:generate_one_order_pdf' %}">Wydrukuj Zamówienie LM</a><br><br>
+    <a class="btn btn-outline-secondary" role="button" href="{% url 'order_generator:generate_reports_for_day' %}">Wydrukuj  ZWROTY</a><br><br>
+    <a class="btn btn-outline-secondary" role="button" href="">Zapisz do EXCEL</a><br><br>
+    <a class="btn btn-outline-secondary" role="button" href="">Panel administratora</a><br><br>
 {% endblock %}

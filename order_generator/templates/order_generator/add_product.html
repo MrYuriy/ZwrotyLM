@@ -2,30 +2,43 @@
 
 {% block title %}Додати продукти до замовлення{% endblock %}
 
+{% block navigation %}
+    <nav class="navigation">
+        <a class="btn btn-secondary" role="button" href="{% url 'order_generator:home' %}">Home</a>
+        <a class="btn btn-outline-secondary" role="button" href="{% url 'order_generator:create_order' %}">Nowe zamówienie</a>
+        <form action="{% url 'order_generator:generate_one_order_pdf' %}" method="post" target="_blank" style="display: inline;">
+            {% csrf_token %}
+            <input type="hidden", name="order_number", value="{{ order.nr_order }}" , id="order_number">
+            <button type="submit" class="btn btn-outline-secondary">Wydrukować</button>
+        </form>
+    </nav>
+{% endblock %}
+
 {% block content %}
-    <h1>Додати продукти до замовлення №{{ order.nr_order }}</h1>
+    <h3>Nr zamówienia: №{{ order.nr_order }}</h3>
     <form method="post">
         {% csrf_token %}
-        <div>
-            <label for="sku">SKU:</label>
-            <input type="text" name="sku" id="sku" required>
+        <div class="input-group mb-3" type="number">
+            <span class="input-group-text" >SKU/EAN:</span>
+            <input type="number" class="form-control" name="sku" id="sku" required>
         </div>
-        <!-- Додайте div для відображення назви продукту -->
-        <div id="product-name">
-            Назва продукту: <span id="product-name-value"></span>
+
+        <div class="input-group mb-3"  id="product-name">
+            <span>Nazwa produktu:</span> <span id="product-name-value"></span>
         </div>
-        <div>
-            <label for="quantity">Кількість:</label>
-            <input type="number" name="quantity" id="quantity" required>
+
+        <div class="input-group mb-3" type="number">
+            <span class="input-group-text" >Ilość :</span>
+            <input type="number" class="form-control" name="quantity" id="quantity" required>
         </div>
-        <div>
-            <label for="quantity_not_damaged">Кількість без пошкоджень:</label>
-            <input type="number" name="quantity_not_damaged" id="quantity_not_damaged" required>
+
+        <div class="input-group mb-3" type="number">
+            <span class="input-group-text" >Ilość pełnowartościowa :</span>
+            <input type="number" class="form-control" name="quantity_not_damaged" id="quantity_not_damaged" required>
         </div>
-        <button type="submit">Додати</button>
+        <button class="btn btn-secondary"  type="submit">Kontynuować</button>
     </form>
-    <a href="{% url 'order_generator:create_order' %}">Нове замовлення</a>
-    <a href="{% url 'order_generator:home' %}">На головну сторінку</a>
+
 {% endblock %}
 
 {% block javascript %}

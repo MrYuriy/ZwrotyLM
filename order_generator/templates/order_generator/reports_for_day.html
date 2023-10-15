@@ -1,12 +1,19 @@
 {% extends "base.html" %}
 
 {% block title %}Головна сторінка{% endblock %}
+{% block navigation %}
+    <nav  class="navigation">
+     <a class="btn btn-secondary" role="button" href="{% url 'order_generator:home' %}">Home</a>
+    </nav>
+{% endblock %}
 
 {% block content %}
    <form method="post" target="_blank" action="{% url 'order_generator:generate_reports_for_day' %}">
      {% csrf_token %}
+    <div class="input-group mb-3" type="number", >
     <span class="input-group-text" id="inputGroup-sizing-default">Data: </span>
-    <input name="date_to_print", id="nrorder" type="date" class="form-control"aria-describedby="inputGroup-sizing-default" value="{{data_today}}">
-     <button type="submit">Generowac</button>
+    <input name="date_to_print", id="work_day" type="date" class="form-control" aria-describedby="inputGroup-sizing-default" value="{{data_today}}">
+     <button type="submit" class="btn btn-secondary">Generowac</button>
+    </div>
    </form>
 {% endblock %}

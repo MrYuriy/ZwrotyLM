@@ -1,12 +1,20 @@
 {% extends "base.html" %}
 
 {% block title %}Головна сторінка{% endblock %}
-
+{% block navigation %}
+    <nav  class="navigation">
+     <a class="btn btn-secondary" role="button" href="{% url 'order_generator:home' %}">Home</a>
+    </nav>
+{% endblock %}
 {% block content %}
    <form method="post" target="_blank" action="{% url 'order_generator:generate_one_order_pdf' %}">
      {% csrf_token %}
-    <label for="order_number">Wpisz numer zamovienia</label>
-    <input id="order_number" name="order_number"><br>
-     <button type="submit">Generowac</button>
+
+     <div class="input-group mb-3" type="number">
+      <span class="input-group-text" >Nr zam:</span>
+      <input class="form-control" id="order_number" name="order_number" required><br>
+     </div>
+     <button class="btn btn-secondary" type="submit">Generowac</button>
+
    </form>
 {% endblock %}
