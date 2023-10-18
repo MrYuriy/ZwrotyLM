@@ -40,7 +40,7 @@ def generate_one_order_pdf(order_id):
     my_canvas = canvas.Canvas(buffer)
     step = 0
     for i in range(
-            (max(len(list_damage_product), len(list_not_damage_product)) // 15) + 1
+        (max(len(list_damage_product), len(list_not_damage_product)) // 15) + 1
     ):
         my_canvas.drawImage(
             "static/img/protocol_lm.jpg", -30, -100, width=652, height=960
@@ -48,14 +48,14 @@ def generate_one_order_pdf(order_id):
         my_canvas.setFont("Helvetica", 16)  # size and type font
         step += 15
         Y = 729  # Y coordinate for not damage products
-        if list_not_damage_product[step - 15: step]:
-            for sku_val in list_not_damage_product[step - 15: step]:
+        if list_not_damage_product[step - 15 : step]:
+            for sku_val in list_not_damage_product[step - 15 : step]:
                 my_canvas.drawString(235, Y, str(sku_val[0]))
                 my_canvas.drawString(500, Y, str(sku_val[1]))
                 Y -= 22  # make step between rows
         Y = 355  # Y coordinate for damage products
-        if list_damage_product[step - 15: step]:
-            for sku in list_damage_product[step - 15: step]:
+        if list_damage_product[step - 15 : step]:
+            for sku in list_damage_product[step - 15 : step]:
                 my_canvas.drawString(235, Y, str(sku[0]))
                 my_canvas.drawString(500, Y, str(sku[1]))
                 Y -= 22  # step between row
@@ -94,7 +94,7 @@ def return_name_of_product(sku_r):
             if len(name_of_product) > 24:
                 name_of_product = name_of_product[:24]
                 if name_of_product[-1] != " ":
-                    name_of_product = name_of_product.rsplit(' ', 1)[0]
+                    name_of_product = name_of_product.rsplit(" ", 1)[0]
         return name_of_product
     except SkuInformation.DoesNotExist:
         return "name not found"
@@ -103,10 +103,12 @@ def return_name_of_product(sku_r):
 def generate_all_orders_pdf(work_day):
     buffer = io.BytesIO()
 
-    pdfmetrics.registerFont(TTFont('FreeSans', 'freesans/FreeSans.ttf'))
+    pdfmetrics.registerFont(TTFont("FreeSans", "freesans/FreeSans.ttf"))
     my_canvas = canvas.Canvas(buffer)
-    my_canvas.drawImage('static/img/returned_products_order.jpg', -10, 0, width=622, height=850)
-    my_canvas.setFont('FreeSans', 12)  # розмір шрифту і вид шрифту
+    my_canvas.drawImage(
+        "static/img/returned_products_order.jpg", -10, 0, width=622, height=850
+    )
+    my_canvas.setFont("FreeSans", 12)  # розмір шрифту і вид шрифту
 
     Y = 610
     counter = 0
@@ -119,25 +121,35 @@ def generate_all_orders_pdf(work_day):
 
         if counter == 21:
             my_canvas.showPage()
-            my_canvas.setFont('FreeSans', 12)
-            my_canvas.drawImage('static/img/returned_products_order.jpg', -10, 0, width=622, height=850)
+            my_canvas.setFont("FreeSans", 12)
+            my_canvas.drawImage(
+                "static/img/returned_products_order.jpg", -10, 0, width=622, height=850
+            )
             Y = 610
             counter = 0
         all_about_order = get_order_detail(order_products)
-        my_canvas.drawString(440, Y, str(all_about_order['tape_of_delivery']))
+        my_canvas.drawString(440, Y, str(all_about_order["tape_of_delivery"]))
 
         if str(order_number) == "0":
             my_canvas.drawString(495, Y, "Brak nr.zam.")
         else:
             my_canvas.drawString(500, Y, str(order_number))
 
-        for dicts in [[all_about_order['not_damage'], 'P'], [all_about_order['damage'], 'U']]:
-
+        for dicts in [
+            [all_about_order["not_damage"], "P"],
+            [all_about_order["damage"], "U"],
+        ]:
             for product in dicts[0]:
                 if counter == 21:
                     my_canvas.showPage()
-                    my_canvas.setFont('FreeSans', 12)
-                    my_canvas.drawImage('static/img/returned_products_order.jpg', -10, 0, width=622, height=850)
+                    my_canvas.setFont("FreeSans", 12)
+                    my_canvas.drawImage(
+                        "static/img/returned_products_order.jpg",
+                        -10,
+                        0,
+                        width=622,
+                        height=850,
+                    )
                     Y = 610
                     counter = 0
                 my_canvas.drawString(55, Y, str(product[0]))
