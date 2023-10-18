@@ -1,0 +1,14 @@
+asgiref==3.7.2
+colorama==0.4.6
+dj-database-url==2.1.0
+Django
+Pillow==10.1.0
+psycopg2==2.9.9
+gunicorn
+python-decouple==3.8
+python-dotenv==1.0.0
+reportlab==4.0.6
+sqlparse==0.4.4
+tqdm==4.66.1
+typing_extensions==4.8.0
+tzdata==2023.3
