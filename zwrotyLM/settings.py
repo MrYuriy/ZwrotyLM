@@ -132,7 +132,7 @@ STATIC_URL = "static/"
 STATICFILES_DIRS = (BASE_DIR / "static",)
 
 STATIC_URL = "static/"
-STATIC_ROOT = "staticfiles/"Ж
+STATIC_ROOT = "staticfiles/"
 ASSETS_ROOT = "/static/assets"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
