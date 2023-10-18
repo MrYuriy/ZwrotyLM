@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "crispy_bootstrap4",
     "order_generator",
 ]
 
@@ -129,6 +130,10 @@ STATIC_URL = "static/"
 STATIC_ROOT = "staticfiles/"
 ASSETS_ROOT = "/static/assets"
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
+
+CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

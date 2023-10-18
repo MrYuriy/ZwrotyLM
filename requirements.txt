@@ -12,3 +12,4 @@ sqlparse
 tqdm
 typing_extensions
 tzdata
+crispy-bootstrap4==2022.1
