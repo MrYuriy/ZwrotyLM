@@ -31,6 +31,7 @@ class Order(models.Model):
         default=BOX,
         verbose_name="tape_of_delivery",
     )
+    recorded_to_ds = models.BooleanField(default=False)
 
     def __str__(self):
         return f"Order {self.nr_order}"
@@ -47,17 +48,22 @@ class OrderProduct(models.Model):
 class SkuInformation(models.Model):
     sku = models.IntegerField()
     name_of_product = CharField(max_length=100)
-    barcode = models.ManyToManyField("Barcode", null=True)
+    barcodes = models.ManyToManyField("Barcode")
 
     def __str__(self):
         return f"{self.sku} {self.name_of_product}"
 
 
 class Barcode(models.Model):
-    code = models.CharField(max_length=20, unique=True)
-
-    class Meta:
-        db_table = "barcode"
+    barcode = models.CharField(max_length=50, unique=True)
 
     def __str__(self):
-        return self.code
+        return self.barcode
+
+
+class SkuInformationBarcode(models.Model):
+    sku_information = models.ForeignKey(SkuInformation, on_delete=models.CASCADE)
+    barcode = models.ForeignKey(Barcode, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.sku_information} {self.barcode}"
