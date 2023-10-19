@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}{% endblock %}
+
+{% block navigation %}
+    <nav class="navigation">
+        <a class="btn btn-secondary" role="button" href="{% url 'order_generator:home' %}">Home</a>
+    </nav>
+{% endblock %}
+
+{% block content %}
+
+<a class="btn btn-outline-secondary" role="button" href="{% url 'order_generator:add_new_sku_ean' %}">Dodac nowy product</a><br><br>
+<a class="btn btn-outline-secondary" role="button" href="{% url 'admin:index' %}">Panel administratora</a><br><br>
+
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Створити замовлення{% endblock %}
+
+{% block navigation %}
+     <a class="btn btn-secondary" role="button" href="{% url 'order_generator:home' %}">Home</a>
+{% endblock %}
+
+{% block content %}
+<h3>Dodaj nowy SKU/EAN</h3>
+<form method="post">
+  {% csrf_token %}
+    <div class="input-group mb-3">
+      <span class="input-group-text" >Sku :</span>
+      <input type="text" class="form-control" name="sku" id="sku" required>
+    </div>
+    <p id="skuError" style="color: red;"></p>
+
+    <div class="input-group mb-3">
+      <span class="input-group-text" >Description :</span>
+      <input type="text" class="form-control" name="description" id="description" required>
+    </div>
+
+    <div class="input-group mb-3">
+      <span class="input-group-text" >EAN:</span>
+      <input type="text" class="form-control" name="ean" id="ean" required>
+    </div>
+    <p id="eanError" style="color: red;"></p>
+    <button class="btn btn-secondary" type="submit" id="submitButton">Dodaj</button>
+</form>
+
+{% endblock %}

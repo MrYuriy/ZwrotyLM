@@ -119,3 +119,24 @@ def generate_reports_for_day(request):
         "order_generator/reports_for_day.html",
         {"data_today": date.today().strftime("%Y-%m-%d")},
     )
+
+
+def admin_panel(request):
+    return render(
+        request, "order_generator/admin_panel.html"
+    )
+
+
+def add_new_sku_barcode(request):
+    if request.method == "POST":
+        sku = request.POST.get("sku")
+        ean = request.POST.get("ean")
+        description = request.POST.get("description")
+
+        sku_instance, _ = SkuInformation.objects.get_or_create(sku=sku, name_of_product=description)
+        ean_instance, _ = Barcode.objects.get_or_create(barcode=ean)
+        sku_information_barcode_instance = SkuInformationBarcode.objects.get_or_create(
+            sku_information=sku_instance,
+            barcode=ean_instance
+        )
+    return render(request, "order_generator/add_new_sku_ean.html")

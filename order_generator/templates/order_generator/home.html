@@ -7,5 +7,5 @@
     <a class="btn btn-outline-secondary" role="button" href="{% url 'order_generator:generate_one_order_pdf' %}">Wydrukuj Zamówienie LM</a><br><br>
     <a class="btn btn-outline-secondary" role="button" href="{% url 'order_generator:generate_reports_for_day' %}">Wydrukuj  ZWROTY</a><br><br>
     <a class="btn btn-outline-secondary" role="button" href="">Zapisz do EXCEL</a><br><br>
-    <a class="btn btn-outline-secondary" role="button" href="{% url 'admin:index' %}">Panel administratora</a><br><br>
+    <a class="btn btn-outline-secondary" role="button" href="{% url 'order_generator:admin_panel' %}">Panel administratora</a><br><br>
 {% endblock %}
