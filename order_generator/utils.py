@@ -10,26 +10,21 @@ import apiclient.discovery
 
 
 def get_order_detail(order_products):
-    data_to_print_order = {"not_damage": None, "damage": None, "tape_of_delivery": None}
-    sku_qty_damage = []
-    sku_qty_not_damage = []
-
-    for product in order_products:
-        if product.product.quantity_not_damaged:
-            value_sku = product.product.sku.sku
-            value_not_damage_product = product.product.quantity_not_damaged
-            sku_qty_not_damage.append([value_sku, value_not_damage_product])
-
-        if product.product.quantity_damage:
-            value_sku = product.product.sku.sku
-            value_damage_product = product.product.quantity_damage
-            sku_qty_damage.append([value_sku, value_damage_product])
-
-    data_to_print_order["not_damage"] = sku_qty_not_damage
-    data_to_print_order["damage"] = sku_qty_damage
-    data_to_print_order["date_writes"] = order_products[0].order.creation_date
-    data_to_print_order["nr_order"] = order_products[0].order.nr_order
-    data_to_print_order["tape_of_delivery"] = order_products[0].order.tape_of_delivery
+    data_to_print_order = {
+        "not_damage": [
+            [product.product.sku.sku, product.product.quantity_not_damaged]
+            for product in order_products
+            if product.product.quantity_not_damaged
+        ],
+        "damage": [
+            [product.product.sku.sku, product.product.quantity_damage]
+            for product in order_products
+            if product.product.quantity_damage
+        ],
+        "date_writes": order_products[0].order.creation_date,
+        "nr_order": order_products[0].order.nr_order,
+        "tape_of_delivery": order_products[0].order.tape_of_delivery,
+    }
     return data_to_print_order
 
 
