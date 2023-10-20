@@ -5,7 +5,7 @@
 {% block navigation %}
     <nav class="navigation">
         <a class="btn btn-secondary" role="button" href="{% url 'order_generator:home' %}">Home</a>
-        <a class="btn btn-outline-secondary" role="button" href="{% url 'order_generator:create_order' %}">Nowe zamówienie</a>
+        <a class="btn btn-outline-secondary" role="button" href="{% url 'order_generator:create_order' %}?nr_order={{ order.nr_order }}">Nowe zamówienie</a>
         <form action="{% url 'order_generator:generate_one_order_pdf' %}" method="post" target="_blank" style="display: inline;">
             {% csrf_token %}
             <input type="hidden", name="order_number", value="{{ order.nr_order }}" , id="order_number">

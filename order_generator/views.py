@@ -3,9 +3,10 @@ from .models import Order, Product, OrderProduct, SkuInformation, Barcode, SkuIn
 from django.db.models import Q
 from django.http import JsonResponse, FileResponse
 from django.core.exceptions import ObjectDoesNotExist
-from order_generator.utils import generate_one_order_pdf, generate_all_orders_pdf
+from order_generator.utils import generate_one_order_pdf, generate_all_orders_pdf, write_one_order_to_gs
 from datetime import date, datetime
 from django.db import transaction
+from asgiref.sync import sync_to_async
 
 
 def home(request):
@@ -18,6 +19,12 @@ def create_order(request):
         tape_of_delivery = request.POST.get("tape_of_delivery")
         Order.objects.create(nr_order=order_number, tape_of_delivery=tape_of_delivery)
         return redirect("order_generator:add_product", order_nr=order_number)
+
+    nr_order = request.GET.get('nr_order')
+
+    if nr_order:
+        order = Order.objects.filter(nr_order=nr_order).last()
+        write_one_order_to_gs(order.id)
 
     return render(request, "order_generator/create_order.html")
 
@@ -132,7 +139,6 @@ def add_new_sku_barcode(request):
         sku = request.POST.get("sku")
         ean = request.POST.get("ean")
         description = request.POST.get("description")
-
         sku_instance, _ = SkuInformation.objects.get_or_create(sku=sku, name_of_product=description)
         ean_instance, _ = Barcode.objects.get_or_create(barcode=ean)
         sku_information_barcode_instance = SkuInformationBarcode.objects.get_or_create(
@@ -140,3 +146,4 @@ def add_new_sku_barcode(request):
             barcode=ean_instance
         )
     return render(request, "order_generator/add_new_sku_ean.html")
+

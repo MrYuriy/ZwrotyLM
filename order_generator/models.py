@@ -33,6 +33,14 @@ class Order(models.Model):
     )
     recorded_to_ds = models.BooleanField(default=False)
 
+    def get_delivery_type(self):
+        if self.tape_of_delivery == self.PALLET:
+            return "paleta"
+        elif self.tape_of_delivery == self.BOX:
+            return "paczka"
+        else:
+            return "Error"
+
     def __str__(self):
         return f"Order {self.nr_order}"
 

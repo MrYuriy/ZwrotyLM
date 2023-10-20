@@ -175,6 +175,7 @@ creds.json
 Asupplier_sku.csv
 supplier_sku_data.csv
 test.csv
+creds.json
 
 
 # End of https://www.toptal.com/developers/gitignore/api/django
