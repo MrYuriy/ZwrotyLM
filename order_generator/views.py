@@ -6,7 +6,6 @@ from django.core.exceptions import ObjectDoesNotExist
 from order_generator.utils import generate_one_order_pdf, generate_all_orders_pdf, write_one_order_to_gs
 from datetime import date, datetime
 from django.db import transaction
-from asgiref.sync import sync_to_async
 
 
 def home(request):

@@ -66,40 +66,47 @@ def generate_one_order_pdf(order_id):
     return buffer
 
 
-def get_total_sorted_orders(order_products_today):
-    order_product_list = []
-    current_order_id = None
-    current_order_products = []
+def get_total_order_list(target_date):
+    total_order_list = []
+    order_products = OrderProduct.objects.filter(order__creation_date=target_date).prefetch_related("order",
+                                                                                                    "product__sku")
+    order_list = []
+    for order_product in order_products:
+        sku = order_product.product.sku.sku
+        name_of_product = order_product.product.sku.name_of_product
+        if len(name_of_product) > 21:
+            name_of_product = name_of_product[:20]
+        quantity_not_damaged = order_product.product.quantity_not_damaged
+        quantity_damage = order_product.product.quantity_damage
+        tape_of_delivery = order_product.order.tape_of_delivery
+        nr_order = order_product.order.nr_order
+        if nr_order == 0:
+            nr_order = "Brak nr.zam."
 
-    for order_product in order_products_today:
-        if order_product.order_id != current_order_id:
-            if current_order_id is not None:
-                order_product_list.append((current_order_id, current_order_products))
-            current_order_id = order_product.order_id
-            current_order_products = []
-        current_order_products.append(order_product)
+        order_id = order_product.order.id
+        if quantity_not_damaged:
+            order_row = [
+                sku, name_of_product, quantity_not_damaged,
+                "P",
+                f"{tape_of_delivery if order_id not in order_list else ''}",
+                f"{nr_order if order_id not in order_list else ''}"]
 
-    if current_order_id is not None:
-        order_product_list.append((current_order_id, current_order_products))
-
-    return order_product_list
-
-
-def return_name_of_product(sku_r):
-    try:
-        sku_info = SkuInformation.objects.filter(sku=int(sku_r)).last()
-        if sku_info:
-            name_of_product = sku_info.name_of_product
-            if len(name_of_product) > 24:
-                name_of_product = name_of_product[:24]
-                if name_of_product[-1] != " ":
-                    name_of_product = name_of_product.rsplit(" ", 1)[0]
-        return name_of_product
-    except SkuInformation.DoesNotExist:
-        return "name not found"
+            total_order_list.append(order_row)
+            order_list.append(order_id)
+        if quantity_damage:
+            order_row = [
+                sku, name_of_product, quantity_damage,
+                "U",
+                f"{tape_of_delivery if order_id not in order_list else ''}",
+                f"{nr_order if order_id not in order_list else ''}"]
+            total_order_list.append(order_row)
+            order_list.append(order_id)
+    return total_order_list
 
 
 def generate_all_orders_pdf(work_day):
+    order_product_list = get_total_order_list(work_day)
+
     buffer = io.BytesIO()
 
     pdfmetrics.registerFont(TTFont("FreeSans", "freesans/FreeSans.ttf"))
@@ -107,62 +114,97 @@ def generate_all_orders_pdf(work_day):
     my_canvas.drawImage(
         "static/img/returned_products_order.jpg", -10, 0, width=622, height=850
     )
-    my_canvas.setFont("FreeSans", 12)  # розмір шрифту і вид шрифту
+    my_canvas.setFont("FreeSans", 12)
 
     Y = 610
     counter = 0
+    X_coordinates = [55, 131, 310, 380, 440, 495]
 
-    order_products_today = OrderProduct.objects.filter(order__creation_date=work_day)
-    order_products_list = get_total_sorted_orders(order_products_today)
+    for order_row in order_product_list:
+        for x, info in zip(X_coordinates, order_row):
 
-    for _, order_products in order_products_list:
-        order_number = order_products[0].order.nr_order
+            if counter == 21:
+                my_canvas.showPage()
+                my_canvas.setFont("FreeSans", 12)
+                my_canvas.drawImage(
+                    "static/img/returned_products_order.jpg", -10, 0, width=622, height=850
+                )
+                Y = 610
+                counter = 0
+            my_canvas.drawString(x, Y, str(info))
 
-        if counter == 21:
-            my_canvas.showPage()
-            my_canvas.setFont("FreeSans", 12)
-            my_canvas.drawImage(
-                "static/img/returned_products_order.jpg", -10, 0, width=622, height=850
-            )
-            Y = 610
-            counter = 0
-        all_about_order = get_order_detail(order_products)
-        my_canvas.drawString(440, Y, str(all_about_order["tape_of_delivery"]))
-
-        if str(order_number) == "0":
-            my_canvas.drawString(495, Y, "Brak nr.zam.")
-        else:
-            my_canvas.drawString(500, Y, str(order_number))
-
-        for dicts in [
-            [all_about_order["not_damage"], "P"],
-            [all_about_order["damage"], "U"],
-        ]:
-            for product in dicts[0]:
-                if counter == 21:
-                    my_canvas.showPage()
-                    my_canvas.setFont("FreeSans", 12)
-                    my_canvas.drawImage(
-                        "static/img/returned_products_order.jpg",
-                        -10,
-                        0,
-                        width=622,
-                        height=850,
-                    )
-                    Y = 610
-                    counter = 0
-                my_canvas.drawString(55, Y, str(product[0]))
-                name_of_product = str(return_name_of_product(product[0]))[:25]
-                my_canvas.drawString(131, Y, name_of_product)
-                my_canvas.drawString(310, Y, str(product[1]))
-                my_canvas.drawString(380, Y, str(dicts[1]))
-                counter += 1
-                Y -= 21
-
+        counter += 1
+        Y -= 21
     my_canvas.showPage()
     my_canvas.save()
     buffer.seek(0)
     return buffer
+
+
+# def generate_all_orders_pdf(work_day):
+#     buffer = io.BytesIO()
+#
+#     pdfmetrics.registerFont(TTFont("FreeSans", "freesans/FreeSans.ttf"))
+#     my_canvas = canvas.Canvas(buffer)
+#     my_canvas.drawImage(
+#         "static/img/returned_products_order.jpg", -10, 0, width=622, height=850
+#     )
+#     my_canvas.setFont("FreeSans", 12)  # розмір шрифту і вид шрифту
+#
+#     Y = 610
+#     counter = 0
+#
+#     order_products_today = OrderProduct.objects.filter(order__creation_date=work_day)
+#     order_products_list = get_total_sorted_orders(order_products_today)
+#
+#     for _, order_products in order_products_list:
+#         order_number = order_products[0].order.nr_order
+#
+#         if counter == 21:
+#             my_canvas.showPage()
+#             my_canvas.setFont("FreeSans", 12)
+#             my_canvas.drawImage(
+#                 "static/img/returned_products_order.jpg", -10, 0, width=622, height=850
+#             )
+#             Y = 610
+#             counter = 0
+#         all_about_order = get_order_detail(order_products)
+#         my_canvas.drawString(440, Y, str(all_about_order["tape_of_delivery"]))
+#
+#         if str(order_number) == "0":
+#             my_canvas.drawString(495, Y, "Brak nr.zam.")
+#         else:
+#             my_canvas.drawString(500, Y, str(order_number))
+#
+#         for dicts in [
+#             [all_about_order["not_damage"], "P"],
+#             [all_about_order["damage"], "U"],
+#         ]:
+#             for product in dicts[0]:
+#                 if counter == 21:
+#                     my_canvas.showPage()
+#                     my_canvas.setFont("FreeSans", 12)
+#                     my_canvas.drawImage(
+#                         "static/img/returned_products_order.jpg",
+#                         -10,
+#                         0,
+#                         width=622,
+#                         height=850,
+#                     )
+#                     Y = 610
+#                     counter = 0
+#                 my_canvas.drawString(55, Y, str(product[0]))
+#                 name_of_product = str(return_name_of_product(product[0]))[:25]
+#                 my_canvas.drawString(131, Y, name_of_product)
+#                 my_canvas.drawString(310, Y, str(product[1]))
+#                 my_canvas.drawString(380, Y, str(dicts[1]))
+#                 counter += 1
+#                 Y -= 21
+#
+#     my_canvas.showPage()
+#     my_canvas.save()
+#     buffer.seek(0)
+#     return buffer
 
 
 def connect_to_gs():
