@@ -15,6 +15,7 @@ admin.site.register(SkuInformationBarcode)
 
 
 class SkuInformationAdmin(admin.ModelAdmin):
+    list_per_page = 20
     list_display = ("sku", "name_of_product")
     search_fields = ("sku", "name_of_product")
 
@@ -30,6 +31,8 @@ class OrderedProductInline(admin.TabularInline):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
+    list_per_page = 20
+    search_fields = ("nr_order",)
     inlines = [
         OrderedProductInline,
     ]

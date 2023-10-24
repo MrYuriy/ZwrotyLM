@@ -22,7 +22,6 @@ class Order(models.Model):
         (PALLET, "Pallet"),
         (BOX, "Box"),
     ]
-
     creation_date = models.DateField(auto_now_add=True)
     nr_order = models.IntegerField()
     tape_of_delivery = models.CharField(
@@ -40,7 +39,6 @@ class Order(models.Model):
             return "paczka"
         else:
             return "Error"
-
     def __str__(self):
         return f"Order {self.nr_order}"
 
