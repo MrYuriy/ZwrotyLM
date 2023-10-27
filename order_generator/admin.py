@@ -23,16 +23,32 @@ class SkuInformationAdmin(admin.ModelAdmin):
 admin.site.register(SkuInformation, SkuInformationAdmin)
 
 
-class OrderedProductInline(admin.TabularInline):
-    exclude = []
+class OrderProductInline(admin.TabularInline):
     model = OrderProduct
-    classes = ["collapse"]
+    extra = 1  # Кількість порожніх форм для додавання ліній замовлення
 
-
-@admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_per_page = 20
-    search_fields = ("nr_order",)
-    inlines = [
-        OrderedProductInline,
-    ]
+    list_display = ('nr_order', 'get_delivery_type', 'creation_date', 'recorded_to_ds')
+    list_filter = ('tape_of_delivery', 'recorded_to_ds')
+    search_fields = ('nr_order', 'tape_of_delivery', 'creation_date')
+    inlines = [OrderProductInline]  # Додайте цей інлайн для відображення ліній замовлення
+
+    def get_delivery_type(self, obj):
+        return obj.get_delivery_type()
+    get_delivery_type.short_description = 'Delivery Type'
+
+admin.site.register(Order, OrderAdmin)
+
+# class OrderedProductInline(admin.TabularInline):
+#     exclude = []
+#     model = OrderProduct
+#     classes = ["collapse"]
+#
+#
+# @admin.register(Order)
+# class OrderAdmin(admin.ModelAdmin):
+#     list_per_page = 20
+#     search_fields = ("nr_order",)
+#     inlines = [
+#         OrderedProductInline,
+#     ]
