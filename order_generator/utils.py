@@ -112,29 +112,29 @@ def generate_all_orders_pdf(work_day):
     pdfmetrics.registerFont(TTFont("FreeSans", "freesans/FreeSans.ttf"))
     my_canvas = canvas.Canvas(buffer)
     my_canvas.drawImage(
-        "static/img/returned_products_order.jpg", -10, 0, width=622, height=850
+        "static/img/zwroty od klijenta.jpg", -10, 0, width=622, height=850
     )
     my_canvas.setFont("FreeSans", 12)
 
-    Y = 610
+    Y = 585
     counter = 0
-    X_coordinates = [55, 131, 310, 380, 440, 495]
+    X_coordinates = [55, 125, 310, 380, 440, 485]
 
     for order_row in order_product_list:
         for x, info in zip(X_coordinates, order_row):
 
-            if counter == 21:
+            if counter == 17:
                 my_canvas.showPage()
                 my_canvas.setFont("FreeSans", 12)
                 my_canvas.drawImage(
-                    "static/img/returned_products_order.jpg", -10, 0, width=622, height=850
+                    "static/img/zwroty od klijenta.jpg", -10, 0, width=622, height=850
                 )
-                Y = 610
+                Y = 585
                 counter = 0
             my_canvas.drawString(x, Y, str(info))
 
         counter += 1
-        Y -= 21
+        Y -= 26
     my_canvas.showPage()
     my_canvas.save()
     buffer.seek(0)
