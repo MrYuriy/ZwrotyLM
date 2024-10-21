@@ -116,7 +116,7 @@ def generate_all_orders_pdf(work_day):
     )
     my_canvas.setFont("FreeSans", 12)
 
-    Y = 585
+    Y = 615
     counter = 0
     X_coordinates = [55, 125, 310, 380, 440, 485]
 
@@ -129,7 +129,7 @@ def generate_all_orders_pdf(work_day):
                 my_canvas.drawImage(
                     "static/img/zwroty od klijenta.jpg", -10, 0, width=622, height=850
                 )
-                Y = 585
+                Y = 615
                 counter = 0
             my_canvas.drawString(x, Y, str(info))
 
