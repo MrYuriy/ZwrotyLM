@@ -32,7 +32,7 @@ CREDENTIALS_FILE_PATH = "creds.json"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1", "zwrotylm-u300.onrender.com", "zwrotylm-ylam.onrender.com"]
+ALLOWED_HOSTS = ["*"]
 INTERNAL_IPS = ["127.0.0.1"]
 
 
